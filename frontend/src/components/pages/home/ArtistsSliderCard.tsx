@@ -14,6 +14,7 @@ type Props = {
   spotify_count: number;
   soundcloud_count: number;
   instagram_count: number;
+  total_discography:number
 };
 
 const ArtistsSliderCard = ({
@@ -28,6 +29,7 @@ const ArtistsSliderCard = ({
   spotify_count,
   soundcloud_count,
   instagram_count,
+  total_discography
 }: Props) => {
   const formatNumber = (num: number): string => {
     if (num >= 1_000_000_000) {
@@ -114,7 +116,7 @@ const ArtistsSliderCard = ({
             )}{" "}
             social followers
           </div>
-          <div style={{ textAlign: "center" }}>97 photos</div>
+          <div style={{ textAlign: "center" }}>{total_discography} photos</div>
         </div>
       </div>
     </div>
