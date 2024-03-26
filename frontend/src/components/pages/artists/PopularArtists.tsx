@@ -101,21 +101,25 @@ console.log("artists>>>>",artists);
       console.log(error.message);
     }
   };
+console.log();
 
   const handleFilterChange = async (e) => {
     const filterData = {
       gender: e.target.name === 'gender' ? e.target.value : undefined,
       ageFilter: e.target.name === 'age' ? e.target.value : undefined,
       groupType: e.target.name === 'groupType' ? e.target.value : undefined,
+      label: e.target.name === 'labels' ? e.target.value : undefined,
     };
     filterArtists(filterData);
   };
 
-  const getArtistByGenres = async (vl: { label: string }, page?: number) => {
+
+  
+  const getArtistByGenres = async (genre, page = 1) => {
     try {
       const res = await api.server.POST(
-        `/data/artists/genre`,
-        { genre: vl?.label, page: page },
+        "/data/artists/genre",
+        { genre: genre.toLowerCase(), page: page, pageSize: 10 }, // Adjusted payload data
         ""
       );
       const data = await res.json();
@@ -155,6 +159,28 @@ console.log("artists>>>>",artists);
       data.status ? setArtists((prev) => [...prev, ...data.artists]) : null;
     }
   };
+  const handleGenreClick = (genre) => {
+    getArtistByGenres(genre.label);
+  };
+  const genreButtons = genres.map((genre, index) => (
+    <li className="nav-item" role="presentation" key={index}>
+      <button
+        className={`nav-link ${index === 0 ? 'active' : ''}`}
+        id={`${genre.label}-tab`}
+        data-bs-toggle="tab"
+        data-bs-target={`#${genre.label}-tab-pane`}
+        type="button"
+        role="tab"
+        aria-controls={`${genre.label}-tab-pane`}
+        aria-selected={index === 0 ? 'true' : 'false'}
+        aria-label={`${genre.label}-tab`}
+        onClick={() => handleGenreClick(genre)}
+      >
+        {genre.label}
+      </button>
+    </li>
+  ));
+
   return (
     // <!--genres section-->
     <section className="trending__section pr-24 pl-24 pb-100">
@@ -228,22 +254,22 @@ console.log("artists>>>>",artists);
               <div className="d-flex flex-wrap g-4">
                 <label className="tt-buttons">
                   {"< 20"}
-                  <input type="radio" name="age" value="< 20" onChange={handleFilterChange} />
+                  <input type="radio" name="age" value="20>age" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
                   20 - 30
-                  <input type="radio" name="age" value="20 - 30" onChange={handleFilterChange} />
+                  <input type="radio" name="age" value="20-30" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
                   30 - 40
-                  <input type="radio" name="age" value="30 - 40" onChange={handleFilterChange} />
+                  <input type="radio" name="age" value="30-40" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
                   {"> 40"}
-                  <input type="radio" name="age" value="> 40" onChange={handleFilterChange} />
+                  <input type="radio" name="age" value="40<age" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
               </div>
@@ -267,28 +293,28 @@ console.log("artists>>>>",artists);
               <div className="fw-600 mb-2">LABELS</div>
               <div className="d-flex flex-wrap g-4">
                 <label className="tt-buttons">
-                Interscope Records
-                  <input type="radio" name="labels" />
+                  Interscope Records
+                  <input type="radio" name="labels" value="Interscope Records" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
-                Atlantic Records
-                  <input type="radio" name="labels" />
+                  Atlantic Records
+                  <input type="radio" name="labels" value="Atlantic Records" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
-                Bear Records
-                  <input type="radio" name="labels" />
+                  Bear Records
+                  <input type="radio" name="labels" value="Bear Records" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
-                Fox Records
-                  <input type="radio" name="labels" />
+                  Fox Records
+                  <input type="radio" name="labels" value="Fox Records" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
                 <label className="tt-buttons">
-                Rabbit Records
-                  <input type="radio" name="labels" />
+                  Rabbit Records
+                  <input type="radio" name="labels" value="Rabbit Records" onChange={handleFilterChange} />
                   <button type="button" className="custom-radio"></button>
                 </label>
               </div>
@@ -319,58 +345,10 @@ console.log("artists>>>>",artists);
             options={views}
           />
         </div>
-          <SelectBox 
-            onChange={(vl: { label: string }) => getArtistByGenres(vl)}
-            options={genres} 
-          />
-      
-        {/* <ul className="nav nav-tabs" id="myTab" role="tablist">
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link active"
-              id="home-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#home-tab-pane"
-              type="button"
-              role="tab"
-              aria-controls="home-tab-pane"
-              aria-selected="true"
-              aria-label="home-tab"
-            >
-              Featured
-            </button>
-          </li>
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link"
-              id="profile-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#profile-tab-pane"
-              type="button"
-              role="tab"
-              aria-controls="profile-tab-pane"
-              aria-selected="false"
-              aria-label="profile-tab"
-            >
-              Popular
-            </button>
-          </li>
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link"
-              id="contact-tab"
-              aria-label="contact-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#contact-tab-pane"
-              type="button"
-              role="tab"
-              aria-controls="contact-tab-pane"
-              aria-selected="false"
-            >
-              Newest
-            </button>
-          </li>
-        </ul> */}
+        <ul className="nav nav-tabs" id="myTab" role="tablist">
+    {genreButtons}
+  </ul>
+     
       </div>
    
       <div className="container-fluid">

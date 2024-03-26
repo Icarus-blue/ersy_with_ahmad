@@ -482,8 +482,9 @@ export const getAlbumsBySortingMode = expressAsyncHandler(async (req, res, next)
 })
 
 export const getArtistesByfilter = expressAsyncHandler(async (req, res, next) => {
-    const { gender, ageFilter, groupType, pageSize = 10, page = 1 } = req.body;
+    const { gender, ageFilter, groupType,label, pageSize = 10, page = 1 } = req.body;
     let sqlQuery = 'SELECT * FROM artistes WHERE 1=1';
+    
     // Gender filter
     if (gender) {
         sqlQuery += ` AND gender = '${gender}'`; // Ensure gender values are sanitized or validated
@@ -499,23 +500,27 @@ export const getArtistesByfilter = expressAsyncHandler(async (req, res, next) =>
         const currentYear = new Date().getFullYear();
         switch (ageFilter) {
             case '20>age':
-                sqlQuery += " AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 20";
+                sqlQuery += ` AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 20`;
                 break;
             case '30-40':
-                sqlQuery += " AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 30 AND 40";
+                sqlQuery += ` AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 30 AND 40`;
                 break;
             case '20-30':
-                sqlQuery += " AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 20 AND 30";
+                sqlQuery += ` AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 20 AND 30`;
                 break;
             case '40<age':
-                sqlQuery += " AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40";
+                sqlQuery += ` AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40`;
                 break;
         }
     }
+    if (label) {
+        sqlQuery += ` AND label = '${label}'`; // Ensure label values are sanitized or validated
+    }
     const offset = (page - 1) * pageSize;
-    sqlQuery += `LIMIT ${pageSize} OFFSET ${offset}`;
+    sqlQuery += ` LIMIT ${pageSize} OFFSET ${offset}`;
+    
     let baseQuery = Prisma.raw(sqlQuery);
-    const artists = await client.$queryRaw(baseQuery, pageSize, offset);
+    const artists = await client.$queryRaw(baseQuery);
 
     console.log(artists.length);
     if (artists.length === 0) {
@@ -524,6 +529,7 @@ export const getArtistesByfilter = expressAsyncHandler(async (req, res, next) =>
 
     res.json({ status: true, artists });
 })
+
 
 export const getArtist = expressAsyncHandler(async (req, res, next) => {
     const { artist_id } = req.params
