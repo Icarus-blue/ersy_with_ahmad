@@ -119,7 +119,7 @@ console.log();
     try {
       const res = await api.server.POST(
         "/data/artists/genre",
-        { genre: genre.toLowerCase(), page: page, pageSize: 10 }, // Adjusted payload data
+        { genre: genre || "All" , page: page, pageSize: 10 }, 
         ""
       );
       const data = await res.json();
