@@ -1150,10 +1150,6 @@ router.post('/videos/search', VideoController.getMusicVideosBySearch)
 // router.get('/interviews', VideoController.getInterviews)
 
 router.get('/artists', VideoController.getArtistes)
-router.post('/artists/genre', VideoController.getArtistesByGenre)
-router.post('/artists/sortmode', VideoController.getArtistesBySortingMode)
-router.post('/artists/filter', VideoController.getArtistesByfilter)
-router.post('/artists/search', VideoController.getArtistesBySearch)
 router.get("/artists/:artist_id", VideoController.getArtist)
 
 router.post('/albums/search', VideoController.getAlbumsBySearch)
